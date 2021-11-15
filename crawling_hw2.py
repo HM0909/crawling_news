@@ -32,12 +32,12 @@ for item in items:
     print(title.text)
     print(wirtes.text[0:7])
     
-    section = detail_soup.find("div" , {"class" : "text"}) 
-    contents = section.find_all("div")
-    full_content = ""
+    # section = detail_soup.find("div" , {"class" : "text"}) 
+    # contents = section.find_all("div")
+    # full_content = ""
 
-    for content in contents:
-        full_content = full_content + content.text
-    print(content.text)
-    print("")
+    # for content in contents:
+    #     full_content = full_content + content.text
+    # print(content.text)
+    # print("")
     

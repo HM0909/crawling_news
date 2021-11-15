@@ -17,7 +17,7 @@ items = root.find_all("li")
 
 for item in items:
     data = item.find("div", {"class":"hdline_article_tit"}) 
-    link = data.find("a") #설명
+    link = data.find("a")
     link_url = link.get('href')
     
     driver.get(base_url + link_url)
