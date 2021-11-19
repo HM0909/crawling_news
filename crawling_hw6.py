@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup as bs
 import time
 import csv
 
-base_url = "https://www.hankyung.com/"
+base_url = "https://www.donga.com/"
 
 driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트로 인해 수정
 driver.get(base_url)
@@ -13,11 +13,11 @@ driver.get(base_url)
 html = driver.page_source
 soup = bs(html, 'html.parser')
 
-root = soup.find("div", {"class":"main-top-major"})
-items = root.find_all("li")
+root = soup.find("div", {"class":"scroll_start01_in"})
+items = root.find_all("li", {"class":"list_item"})
 
 for item in items:
-    # data = item.find("h2", {"class":"news-tit"}) 
+    data = item.find("div", {"class":"cont_info"})
     link = item.find("a")
     link_url = link.get('href')
     
@@ -27,13 +27,17 @@ for item in items:
     detail_soup = bs(detail_html, 'html.parser')
 
     title = detail_soup.find("h1", {"class" : "title"})
-    wirtes = detail_soup.find("div", {"class" : "author"})
+    wirtes = detail_soup.find("span", {"class" : "report"})
 
     print(title.text)
-    print(wirtes.text.strip()) # 기자 두명 붙일 수 있나?
+    print(wirtes.text)
+
+    section = detail_soup.find("div" , {"class" : "article_view"}) 
+    contents = section.find("div" , {"class" : "article_txt"}) 
+    full_content = ""
     
-    section = detail_soup.find("div" , {"class" : "articlebody ga-view"})
-    # contents_head = section.find("div" , {"class" : "summary editoropinions"})
-    # contents_main = section.find("p" , {"class" : "txt"}) 
-    # full_content = ""
-    print(section.text)
+    for content in contents:
+        full_content = full_content + contents.text
+    
+        print(content.text)
+        print("")  #중간에 이상한 태그도 같이 뽑힘

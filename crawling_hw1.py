@@ -1,4 +1,5 @@
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager  #크롬업데이트로 인해 추가
 import urllib.request as ur
 from bs4 import BeautifulSoup as bs
 import time
@@ -6,7 +7,7 @@ import csv
 
 base_url = "https://news.naver.com/"
 
-driver = webdriver.Chrome(executable_path='C:\hm_py\chromedriver')
+driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트로 인해 수정
 driver.get(base_url)
 
 html = driver.page_source
@@ -29,20 +30,16 @@ for item in items:
     wirtes = detail_soup.find("p", {"class" : "b_text"})
 
     print(title.text)
-    print(wirtes.text.strip()) #[9:]
+    print(wirtes.text.strip()) #[9:] 
     
-    # section = detail_soup.find("div", {"class" : "_article_body_contents article_body_contents"})
-    # contents = section.split('<br>')
-    # # print(section)
-    # for content in contents:
-    #     print(content)
-    # print(section.text)
-    # contents = section.find("br")
-    # full_content = ""                              #스크립트?
-
-    # for content in contents:
-    #     full_content = full_content + content.text
-        # print(content.text)
-    #     print("")
-
+    # 막힘
+    section = detail_soup.find("div", {"class" : "_article_body_contents article_body_contents"})
+    contents = section.get("br")
+    full_content = ""
+                        
+    for content in contents:
+        all_content = full_content + content.text
+        print(all_content)
+        print("")
+        
     

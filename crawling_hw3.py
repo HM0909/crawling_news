@@ -1,4 +1,5 @@
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager  #크롬업데이트로 인해 추가
 import urllib.request as ur
 from bs4 import BeautifulSoup as bs
 import time
@@ -6,7 +7,7 @@ import csv
 
 base_url = "https://news.jtbc.joins.com/section/list.aspx?scode="
 
-driver = webdriver.Chrome(executable_path='C:\hm_py\chromedriver')
+driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트로 인해 수정
 driver.get(base_url)
 
 html = driver.page_source
@@ -21,4 +22,12 @@ for item in items:
     link_url = link.get('href')
     
     driver.get("https://news.jtbc.joins.com" + link_url)
-    # https://news.jtbc.joins.com/html/619/NB12030619.html
+
+    detail_html = driver.page_source 
+    detail_soup = bs(detail_html, 'html.parser')
+
+    title = detail_soup.find("div", {"class" : "title"})
+    wirtes = detail_soup.find("dd", {"class" : "name"})
+
+    print(title.text)
+    print(wirtes.text)

@@ -1,4 +1,5 @@
 from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager  #크롬업데이트로 인해 추가
 import urllib.request as ur
 from bs4 import BeautifulSoup as bs
 import time
@@ -6,7 +7,7 @@ import csv
 
 base_url = "https://www.hani.co.kr/"
 
-driver = webdriver.Chrome(executable_path='C:\hm_py\chromedriver')
+driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트로 인해 수정
 driver.get(base_url)
 
 html = driver.page_source
@@ -32,12 +33,13 @@ for item in items:
     print(title.text)
     print(wirtes.text[0:7])
     
-    # section = detail_soup.find("div" , {"class" : "text"}) 
-    # contents = section.find_all("div")
-    # full_content = ""
+    section = detail_soup.find("div" , {"class" : "article-text-font-size"}) 
+    contents = section.find("div" , {"class" : "text"}) 
+    # print(contents.text)
+    full_content = ""  # 각 단락별 구분하기 쉽게 = 삽입하고 싶음
 
-    # for content in contents:
-    #     full_content = full_content + content.text
-    # print(content.text)
-    # print("")
+    for content in contents:
+        full_content = full_content + content.text
     
+        print(contents.text)
+        print("")
