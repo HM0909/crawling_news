@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup as bs
 import time
 import csv
 
-base_url = "https://www.mbn.co.kr/pages/news/index.html"
+base_url = "https://www.mbn.co.kr/pages/news/index.html" # MBN 뉴스
 
 driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트로 인해 수정
 driver.get(base_url)

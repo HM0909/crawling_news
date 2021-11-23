@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup as bs
 import time
 import csv
 
-base_url = "https://news.naver.com/"
+base_url = "https://news.naver.com/" #네이버 뉴스
 
 driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트로 인해 수정
 driver.get(base_url)
