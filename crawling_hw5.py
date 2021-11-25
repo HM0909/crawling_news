@@ -2,36 +2,78 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager  #크롬업데이트로 인해 추가
 import urllib.request as ur
 from bs4 import BeautifulSoup as bs
-import time
 import csv
+import re
 
 base_url = "https://www.mbn.co.kr/pages/news/index.html" # MBN 뉴스
+f = open("C:/hm_py/crawling/result/crawling_hw5.txt", "w", encoding="utf-8")
+cf = open("C:/hm_py/crawling/result/rawling_hw5.csv",'w', newline='', encoding="utf-8")
 
-driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트로 인해 수정
-driver.get(base_url)
-
-html = driver.page_source
-soup = bs(html, 'html.parser')
-
-root = soup.find("div", {"class":"list_news"})
-items = root.find_all("li")
-
-for item in items:
-    # data = item.find("li") 
-    link = item.find("a")
-    # print(link.get('href'))
-    link_url = "https:" + link.get('href')
+wr = csv.writer(cf)
+wr.writerow(['제목', '작성자', '등록일', '내용'])
     
-    driver.get(link_url)
+driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트로 인해 수정
+
+# 크롤링
+def crawling():
+    html = driver.page_source
+    soup = bs(html, 'html.parser')
+    root = soup.find("div", {"class":"list_news"})
+    items = root.find_all("li")
+
+    for item in items:
+        link = item.find("a")
+        link_url = link.get('href')
+        
+        detail(link_url)
+    
+       
+# 상세 크롤링
+def detail(detail_url):
+    driver.get(detail_url)
 
     detail_html = driver.page_source 
     detail_soup = bs(detail_html, 'html.parser')
-
-    title = detail_soup.find("div", {"class" : "box01"}) #<h1> 만 뽑기 어려움 
-    # wirtes = detail_soup.find("div", {"class" : "name"}) #기자가 택스트 내에 들어가 있어서 영역을 어떻게 잡아야 할지 모르겠음
-
-    print(title.text)
-    # print(wirtes.text)
     
-    contents = detail_soup.find("div" , {"class" : "detail"}) 
-    print(contents.text)
+    title = detail_soup.find("h1", {"class" : "title"}).text #제목
+    writer = detail_soup.find("span", {"class" : "report"}).text #작성자
+    content = detail_soup.find("div" , {"class" : "article_txt"}).text #본문 #본문이 각각 다른 div로 되어 있음 ***
+    
+    reg_date = "";
+            
+    file_writer(title, writer, reg_date, content)
+    csv_writer(title, writer, reg_date, content)
+
+# 텍스트 파일 생성
+def file_writer(title, writer, reg_date, content):
+    f.write(title + '\n') 
+    f.write(writer + '\n')
+    f.write(reg_date + '\n')
+    f.write(content + '\n')
+    f.write('\n')
+    
+    
+# csv 파일 생성
+def csv_writer(title, writer, reg_date, content):
+    wr.writerow([title, writer, reg_date, content])
+    
+# 태그 제거
+def relace_tag(content):
+    cleanr = re.compile('<.*?>')
+    cleantext  = re.sub(cleanr, '', content)     
+    
+    return cleantext    
+        
+def main(): 
+    driver.get(base_url)
+    
+    crawling()
+    
+    # 파일 닫기
+    f.close()
+    cf.close()
+
+    driver.quit()
+    
+if __name__ == '__main__':
+    main()

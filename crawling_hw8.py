@@ -37,13 +37,12 @@ def detail(detail_url):
 
     title = detail_soup.find("h1", {"class":"headline"}).text #제목
     writer = detail_soup.find("span", {"class":"author"}).text #작성자
+    content = detail_soup.find("div" , {"class" : "art_body"}).text #본문 
     
-    section = detail_soup.find("div" , {"class" : "art_body"}).text #본문
-    # contents = detail_soup.find("p" , {"class" : "content_text"}) 
     reg_date = "";
             
-    file_writer(title, writer, reg_date, section)
-    csv_writer(title, writer, reg_date, section)
+    file_writer(title, writer, reg_date, content)
+    csv_writer(title, writer, reg_date, content)
 
 # 텍스트 파일 생성
 def file_writer(title, writer, reg_date, content):
