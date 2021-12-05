@@ -6,6 +6,7 @@ import csv
 import re
 
 base_url = "https://www.hankyung.com/" #한국경제 뉴스
+
 f = open("C:/hm_py/crawling/result/crawling_hw4.txt", "w", encoding="utf-8")
 cf = open("C:/hm_py/crawling/result/rawling_hw4.csv",'w', newline='', encoding="utf-8")
 
@@ -26,11 +27,6 @@ def crawling():
         link_url = link.get('href')
         
         detail(link_url)
-
-    # link = items[0].find("a")
-    # link_url = link.get('href')
-    
-    # detail(link_url)
     
        
 # 상세 크롤링
@@ -43,7 +39,7 @@ def detail(detail_url):
     
     title = detail_soup.find("h1", {"class" : "title"}).text #제목
     writer = get_writer(detail_soup.find("div", {"class" : "author"}).text) #작성자 #공백 없이 추출하고 싶음
-    content = detail_soup.find("div" , {"id" : "articletxt"}).text #본문 #영역을 어떻게 잡아야 하는지 모르겠음
+    content = detail_soup.find("div" , {"id" : "articletxt"}).text #본문
     
     
     all_date =detail_soup.find("div" , {"class" : "date-info"})

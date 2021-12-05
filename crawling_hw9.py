@@ -6,6 +6,7 @@ import csv
 import re
 
 base_url = "https://www.chosun.com/" # 조선일보 뉴스
+
 f = open("C:/hm_py/crawling/result/crawling_hw9.txt", "w", encoding="utf-8")
 cf = open("C:/hm_py/crawling/result/rawling_hw9.csv",'w', newline='', encoding="utf-8")
 
