@@ -19,84 +19,77 @@ driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트�
 def crawling():
     html = driver.page_source
     soup = bs(html, 'html.parser')
-    root = soup.find("div", {"class":"news_area bd"})
+    
+    
+    root = soup.find("ul", {"id":"section_list"})
     items = root.find_all("li")
 
     for item in items:
-        data = item.find("dt", {"class":"title_cr"}) 
+        data = item.find("dt", {"class":"title_cr"})
         link = data.find("a")
-        link_url = link.get('href')
+        link_url = link.get("href")
         
-        detail(link_url)
-    
+        detail("https://news.jtbc.joins.com" + link_url)
        
-# # 상세 크롤링
-# def detail(detail_url):
-#     print("https://news.jtbc.joins.com" + detail_url)
-#     driver.get(detail_url)
+       
+#상세 크롤링
+def detail(detail_url):
+    driver.get(detail_url)
 
-#     detail_html = driver.page_source 
-#     detail_soup = bs(detail_html, 'html.parser')
-    
-#     title = detail_soup.find("h1", {"class" : "title"}).text #제목
-#     writer = get_writer(detail_soup.find("div", {"class" : "author"}).text) #작성자 #공백 없이 추출하고 싶음
-#     content = detail_soup.find("div" , {"id" : "articletxt"}).text #본문
+    detail_html = driver.page_source 
+    detail_soup = bs(detail_html, 'html.parser')
     
     
-#     all_date =detail_soup.find("div" , {"class" : "date-info"})
-#     dates =all_date.find_all("span")
+    title = detail_soup.find("h3", {"id" : "jtbcBody"}).text #제목
+    writer = detail_soup.find("dd", {"class" : "name"}).text #작성자
+    content = detail_soup.find("div", {"class" : "article_content"}).text #본문
+   
+
+    all_date =detail_soup.find("span" , {"class" : "artical_date"})
+    dates =all_date.find_all("span")
     
-#     if len(dates) > 1:
-#         reg_date = dates[1].text  # 수정일
-#     else:
-#         reg_date = dates[0].text  # 입력일
+    if len(dates) > 1:
+        reg_date = dates[1].text  # 수정일
+    else:
+        reg_date = dates[0].text  # 입력일
 
             
-#     file_writer(title, writer, reg_date, content)
-#     csv_writer(title, writer, reg_date, content)
+    file_writer(title, writer, reg_date, content)
+    csv_writer(title, writer, reg_date, content)
 
 
-# # 텍스트 파일 생성
-# def file_writer(title, writer, reg_date, content):
-#     f.write(title + '\n') 
-#     f.write(writer + '\n') 
-#     f.write(reg_date + '\n')
-#     f.write(content + '\n')
-#     f.write('\n')
+# 텍스트 파일 생성
+def file_writer(title, writer, reg_date, content):
+    f.write(title + '\n') 
+    f.write(writer + '\n') 
+    f.write(reg_date + '\n')
+    f.write(content + '\n')
+    f.write('\n')
     
     
-# # csv 파일 생성
-# def csv_writer(title, writer, reg_date, content):
-#     wr.writerow([title, writer, reg_date, content])
+# csv 파일 생성
+def csv_writer(title, writer, reg_date, content):
+    wr.writerow([title, writer, reg_date, content])
     
     
-# # 태그 제거
-# def relace_tag(content):
-#     cleanr = re.compile('<.*?>')
-#     cleantext  = re.sub(cleanr, '', content)     
+# 태그 제거
+def relace_tag(content):
+    cleanr = re.compile('<.*?>')
+    cleantext  = re.sub(cleanr, '', content)     
     
-#     return cleantext    
+    return cleantext    
         
-        
-# # 저자 값 리플레스        
-# def get_writer(writer):
-#     writer = writer.replace('\n', '')
-#     writer = writer.replace(" ", "")
-#     writer = writer.replace("·", " ")
     
-#     return writer
+def main(): 
+    driver.get(base_url)
     
+    crawling()
     
-# def main(): 
-#     driver.get(base_url)
-    
-#     crawling()
-    
-#     # 파일 닫기
-#     f.close()
-#     cf.close()
+    # 파일 닫기
+    f.close()
+    cf.close()
 
-#     driver.quit()
+    driver.quit()
     
-# if __name__ == '__main__':
-#     main()
+if __name__ == '__main__':
+    main()

@@ -2,44 +2,95 @@ from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager  #크롬업데이트로 인해 추가
 import urllib.request as ur
 from bs4 import BeautifulSoup as bs
-import time
 import csv
+import re
 
-base_url = "https://www.hani.co.kr/" #한겨레 뉴스
+base_url = "https://www.hani.co.kr" #한겨레 뉴스
 
+f = open("C:/hm_py/crawling/result/crawling_hw2.txt", "w", encoding="utf-8")
+cf = open("C:/hm_py/crawling/result/rawling_hw2.csv",'w', newline='', encoding="utf-8")
+
+wr = csv.writer(cf)
+wr.writerow(['제목', '작성자', '등록일', '내용'])
+    
 driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트로 인해 수정
-driver.get(base_url)
 
-html = driver.page_source
-soup = bs(html, 'html.parser')
+# 크롤링
+def crawling():
+    html = driver.page_source
+    soup = bs(html, 'html.parser')
+    root = soup.find("div", {"class":"main-top01"})
+    items = root.find_all("div", {"class":"article-area"})
 
-root = soup.find("div", {"class":"main-top01"})
-items = root.find_all("div", {"class":"article-area"})
+    for item in items:
+        data = item.find("h4", {"class":"article-title"}) 
+        link = data.find("a")
+        link_url = link.get('href')
+        
+        detail(base_url + link_url)
+      
+       
+#상세 크롤링
+def detail(detail_url):
+    driver.get(detail_url)
 
-for item in items:
-    data = item.find("h4", {"class":"article-title"}) 
-    link = data.find("a")
-    link_url = link.get('href')
-    
-    # print(base_url+ link_url)
-    driver.get(base_url+ link_url)
-    
     detail_html = driver.page_source 
     detail_soup = bs(detail_html, 'html.parser')
-
-    title = detail_soup.find("span", {"class" : "title"})
-    wirtes = detail_soup.find("div", {"class" : "name"})
-
-    print(title.text)
-    print(wirtes.text[0:7])
     
-    section = detail_soup.find("div" , {"class" : "article-text-font-size"}) 
-    contents = section.find("div" , {"class" : "text"}) 
-    # print(contents.text)
-    full_content = ""  # 각 단락별 구분하기 쉽게 = 삽입하고 싶음
-
-    for content in contents:
-        full_content = full_content + content.text
     
-        print(contents.text)
-        print("")
+    title = detail_soup.find("span", {"class" : "title"}).text #제목
+    writer = detail_soup.find("div", {"class" : "name"}).text #작성자
+    
+    
+    section = detail_soup.find("div" , {"class" : "article-text-font-size"})
+    content = section.find("div" , {"class" : "text"}).text #본문
+    
+    
+    all_date =detail_soup.find("p" , {"class" : "date-time"})
+    dates =all_date.find_all("span")
+    
+    if len(dates) > 1:
+        reg_date = dates[1].text  # 수정일
+    else:
+        reg_date = dates[0].text  # 입력일
+
+            
+    file_writer(title, writer, reg_date, content)
+    csv_writer(title, writer, reg_date, content)
+
+
+# 텍스트 파일 생성
+def file_writer(title, writer, reg_date, content):
+    f.write(title + '\n') 
+    f.write(writer + '\n') 
+    f.write(reg_date + '\n')
+    f.write(content + '\n')
+    f.write('\n')
+    
+    
+# csv 파일 생성
+def csv_writer(title, writer, reg_date, content):
+    wr.writerow([title, writer, reg_date, content])
+    
+    
+# 태그 제거
+def relace_tag(content):
+    cleanr = re.compile('<.*?>')
+    cleantext  = re.sub(cleanr, '', content)     
+    
+    return cleantext    
+        
+    
+def main(): 
+    driver.get(base_url)
+    
+    crawling()
+    
+    # 파일 닫기
+    f.close()
+    cf.close()
+
+    driver.quit()
+    
+if __name__ == '__main__':
+    main()
