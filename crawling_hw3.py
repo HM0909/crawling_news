@@ -24,9 +24,7 @@ def crawling():
         data = item.find("dt", {"class":"title_cr"})
         link = data.find("a")
         link_url = link.get("href")
-        
-        detail("https://news.jtbc.joins.com" + link_url)
-       
+               
         datas.append(detail("https://news.jtbc.joins.com" + link_url))
     
     file_util.file_writer(TEXT_FILE_PATH , datas)
