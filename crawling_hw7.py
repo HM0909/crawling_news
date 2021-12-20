@@ -20,8 +20,8 @@ def crawling():
     html = driver.page_source
     soup = bs(html, 'html.parser')
     root = soup.find("div", {"class":"now01 YTN_CSA_bottomnews1"}) #윗줄, 아랫줄 같이 추출 가능할까?
-    items = root.find_all("ul")
-
+    items = root.find_all("ul")  # 1열만 인식하는 느낌?
+    
     for item in items:
         data = item.find("li")
         link = data.find("a")
@@ -40,12 +40,28 @@ def detail(detail_url):
     top = detail_soup.find("div", {"class":"top"})
     title = top.find("h3").text #제목
     
-    writer =  "";
-    # etail_soup.find("span", {"class":"author"}).text #작성자 #기자가 택스트 내에 들어가 있어서 영역을 어떻게 잡아야 할지 모르겠음
+    # orgin_content = detail_soup.find("div" , {"class" : "tx"})
+    # str_content = str(orgin_content)
     
-    content = detail_soup.find("div" , {"class" : "article"}) .text #본문 
+    # writers = str(orgin_content).split('<br/>')
+    # real_writer = ""
     
-    reg_date = "";
+    # for writer in writers:
+    #     if writer.find('@kmib.co.kr') > 0:
+    #         real_writer = writer 
+            
+    section = detail_soup.find("div" , {"class" : "article"})
+    content = section.find("span").text #본문
+    
+    # content = relace_tag(str_content.replace('<br/>', '\n')) #본문
+    
+    dates =detail_soup.find_all("span", {"class" : "time"})
+    
+    if len(dates) > 1:
+        reg_date = dates[1].text  # 수정일
+    else:
+        reg_date = dates[0].text  # 입력일
+    
             
     file_writer(title, writer, reg_date, content)
     csv_writer(title, writer, reg_date, content)

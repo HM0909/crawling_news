@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup as bs
 import csv
 import re
 
-base_url = "https://news.naver.com" #네이버 뉴스
+base_url = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=101" #네이버 경제 뉴스
 
 f = open("C:/hm_py/crawling/result/crawling_hw1.txt", "w", encoding="utf-8")
 cf = open("C:/hm_py/crawling/result/rawling_hw1.csv",'w', newline='', encoding="utf-8")
@@ -19,15 +19,15 @@ driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트�
 def crawling():
     html = driver.page_source
     soup = bs(html, 'html.parser')
-    root = soup.find("ul", {"class":"hdline_article_list"})
-    items = root.find_all("li")
+    root = soup.find("div", {"class":"section_body"})
+    items = root.find_all("dl")
 
     for item in items:
-        data = item.find("div", {"class":"hdline_article_tit"}) 
+        data = item.find("dt") 
         link = data.find("a")
         link_url = link.get('href')
         
-        detail(base_url + link_url)
+        detail("https://news.naver.com" + link_url)
       
        
 #상세 크롤링
@@ -40,8 +40,6 @@ def detail(detail_url):
     
     title = detail_soup.find("h3", {"class" : "tts_head"}).text #제목
     writer = detail_soup.find("p", {"class" : "b_text"}).text #작성자
-    
-    
     content = detail_soup.find("div", {"class" : "_article_body_contents article_body_contents"}).text #본문
 
  

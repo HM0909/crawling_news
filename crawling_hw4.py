@@ -31,13 +31,12 @@ def crawling():
        
 # 상세 크롤링
 def detail(detail_url):
-    print("detail_url : " + detail_url)
     driver.get(detail_url)
 
     detail_html = driver.page_source 
     detail_soup = bs(detail_html, 'html.parser')
     
-    title = detail_soup.find("h1", {"class" : "title"}).text #제목
+    title = get_writer(detail_soup.find("h1", {"class" : "title"}).text) #제목
     writer = get_writer(detail_soup.find("div", {"class" : "author"}).text) #작성자 #공백 없이 추출하고 싶음
     content = detail_soup.find("div" , {"id" : "articletxt"}).text #본문
     
@@ -77,7 +76,7 @@ def relace_tag(content):
     return cleantext    
         
         
-# 저자 값 리플레스        
+# 텍스트 리플레스        
 def get_writer(writer):
     writer = writer.replace('\n', '')
     writer = writer.replace(" ", "")

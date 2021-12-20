@@ -40,7 +40,14 @@ def detail(detail_url):
     writer = detail_soup.find("span", {"class":"author"}).text #작성자
     content = detail_soup.find("div" , {"class" : "art_body"}).text #본문 
     
-    reg_date = "";
+    all_date =detail_soup.find("div" , {"class" : "byline"})
+    dates =all_date.find_all("em")
+    # print(len(dates))
+    
+    if len(dates) > 1: 
+        reg_date = dates[1].text  # 수정일
+    else:
+        reg_date = dates[0].text  # 입력일
             
     file_writer(title, writer, reg_date, content)
     csv_writer(title, writer, reg_date, content)

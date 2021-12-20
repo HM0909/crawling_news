@@ -39,25 +39,26 @@ def detail(detail_url):
     
     orgin_content = detail_soup.find("div" , {"class" : "tx"})
     str_content = str(orgin_content)
-    content = relace_tag(str_content.replace('<br/>', '\n'))   # 본문
- 
-    dates = detail_soup.find_all("span" , {"class" : "t11"})
-    reg_date = "";
-
-    if len(dates) > 1:
-        reg_date = dates[1].text  # 수정일
-    else:
-        reg_date = dates[0].text  # 입력일
-
-    writers = str(orgin_content).split('<br/>')
+    
+    writers = str(orgin_content).split('<br/>')  # 작성자
     real_writer = ""
     
     for writer in writers:
         if writer.find('@kmib.co.kr') > 0:
             real_writer = writer 
             
-    file_writer(title, real_writer, reg_date, content)
+    content = relace_tag(str_content.replace('<br/>', '\n'))   # 본문
+ 
+    dates = detail_soup.find_all("span" , {"class" : "t11"})
+  
+    if len(dates) > 1:
+        reg_date = dates[1].text  # 수정일
+    else:
+        reg_date = dates[0].text  # 입력일
 
+            
+    file_writer(title, real_writer, reg_date, content)
+    csv_writer(title, writer, reg_date, content)
 
 # 텍스트 파일 생성
 def file_writer(title, writer, reg_date, content):
