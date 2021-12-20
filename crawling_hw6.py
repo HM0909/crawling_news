@@ -46,7 +46,7 @@ def detail(detail_url):
         reg_date = dates[1].text  # 수정일
     else:
         reg_date = dates[0].text  # 입력일
-    
+            
             
     file_writer(title, writer, reg_date, content)
     csv_writer(title, writer, reg_date, content)
