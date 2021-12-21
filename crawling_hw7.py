@@ -6,7 +6,7 @@ import utils.file_util as file_util
 
 base_url = "https://www.ytn.co.kr/" # YTN 뉴스
 TEXT_FILE_PATH = "C:/hm_py/crawling/result/crawling_hw7.txt"
-CSV_FILE_PATH = "C:/hm_py/crawling/result/rawling_hw7.csv"
+CSV_FILE_PATH = "C:/hm_py/crawling/result/crawling_hw7.csv"
 CSV_HEADER = ['제목', '작성자', '등록일', '내용']
     
 driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트로 인해 수정
@@ -28,9 +28,10 @@ def crawling():
     
         datas.append(detail(link_url))
      
-    file_util.file_writer(TEXT_FILE_PATH , datas)
-    file_util.csv_writer(TEXT_FILE_PATH, datas, CSV_HEADER)
-                       
+    file_util.file_writer(TEXT_FILE_PATH, datas)   
+    file_util.csv_writer(CSV_FILE_PATH, datas, CSV_HEADER)
+
+
 # 상세 크롤링
 def detail(detail_url):
     driver.get(detail_url)
@@ -43,21 +44,18 @@ def detail(detail_url):
     
     writer = ""
     
-    # orgin_content = detail_soup.find("div" , {"class" : "tx"})
-    # str_content = str(orgin_content)
+    orgin_content = detail_soup.find("div" , {"class" : "article"})
+        
+    writers = str(orgin_content).split('<br/>')
+    real_writer = ""
     
-    # writers = str(orgin_content).split('<br/>')
-    # real_writer = ""
-    
-    # for writer in writers:
-    #     if writer.find('@kmib.co.kr') > 0:
-    #         real_writer = writer 
+    for writer in writers:
+        if writer.find('@ytn.co.kr') > 0:
+            real_writer = writer 
             
     section = detail_soup.find("div" , {"class" : "article"})
     content = section.find("span").text #본문
-    
-    # content = relace_tag(str_content.replace('<br/>', '\n')) #본문
-    
+        
     dates =detail_soup.find_all("span", {"class" : "time"})
     
     if len(dates) > 1:
@@ -66,9 +64,7 @@ def detail(detail_url):
         reg_date = dates[0].text  # 입력일
     
     
-    data = {"title":title, "writer":writer, "content":content, "reg_date":reg_date}
-    
-    return data
+    return [title, real_writer, reg_date, content]
 
 
 def main(): 

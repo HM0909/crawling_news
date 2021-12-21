@@ -6,7 +6,7 @@ import utils.file_util as file_util
 
 base_url = "https://www.chosun.com/" # 조선일보 뉴스
 TEXT_FILE_PATH = "C:/hm_py/crawling/result/crawling_hw9.txt"
-CSV_FILE_PATH = "C:/hm_py/crawling/result/rawling_hw9.csv"
+CSV_FILE_PATH = "C:/hm_py/crawling/result/crawling_hw9.csv"
 CSV_HEADER = ['제목', '작성자', '등록일', '내용']
     
 driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트로 인해 수정
@@ -26,7 +26,7 @@ def crawling():
         datas.append(detail(base_url + link_url))
      
     file_util.file_writer(TEXT_FILE_PATH , datas)
-    file_util.csv_writer(TEXT_FILE_PATH, datas, CSV_HEADER)
+    file_util.csv_writer(CSV_FILE_PATH, datas, CSV_HEADER)
     
 # 상세 크롤링
 def detail(detail_url):
@@ -47,8 +47,8 @@ def detail(detail_url):
         reg_date = dates[0].text  # 입력일
 
             
-    data = {"title":title, "writer":writer, "content":content, "reg_date":reg_date} #데이터 약간 이상한 것 같음
-    return data 
+    return [title, writer, reg_date, content] #데이터 약간 이상한 것 같음
+   
 
 def main(): 
     driver.get(base_url)

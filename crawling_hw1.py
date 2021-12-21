@@ -6,7 +6,7 @@ import utils.file_util as file_util
 
 base_url = "https://news.naver.com/main/main.naver?mode=LSD&mid=shm&sid1=101" #네이버 경제 뉴스
 TEXT_FILE_PATH = "C:/hm_py/crawling/result/crawling_hw1.txt"
-CSV_FILE_PATH = "C:/hm_py/crawling/result/rawling_hw1.csv"
+CSV_FILE_PATH = "C:/hm_py/crawling/result/crawling_hw1.csv"
 CSV_HEADER = ['제목', '작성자', '등록일', '내용']
     
     
@@ -28,7 +28,7 @@ def crawling():
         datas.append(detail("https://news.naver.com" + link_url))
 
     file_util.file_writer(TEXT_FILE_PATH , datas)
-    file_util.csv_writer(TEXT_FILE_PATH, datas, CSV_HEADER)
+    file_util.csv_writer(CSV_FILE_PATH, datas, CSV_HEADER)
             
        
 #상세 크롤링
@@ -51,9 +51,8 @@ def detail(detail_url):
         reg_date = dates[0].text  # 입력일
 
             
-    data = {"title":title, "writer":writer, "content":content, "reg_date":reg_date}
-    return data 
- 
+    return [title, writer, reg_date, content]
+
  
 def main(): 
     driver.get(base_url)

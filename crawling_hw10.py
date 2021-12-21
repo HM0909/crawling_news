@@ -7,7 +7,7 @@ import utils.string_util as string_util
 
 base_url = "http://www.kmib.co.kr/news/index.asp" # 국민일보 뉴스
 TEXT_FILE_PATH = "C:/hm_py/crawling/result/crawling_hw10.txt"
-CSV_FILE_PATH = "C:/hm_py/crawling/result/rawling_hw10.csv"
+CSV_FILE_PATH = "C:/hm_py/crawling/result/crawling_hw10.csv"
 CSV_HEADER = ['제목', '작성자', '등록일', '내용']
     
 driver = webdriver.Chrome(ChromeDriverManager().install()) #크롬업데이트로 인해 수정
@@ -23,9 +23,11 @@ def crawling():
     for item in items:
     
         datas.append(detail(item.get('href')))
-     
+    
+    
     file_util.file_writer(TEXT_FILE_PATH , datas)
-    file_util.csv_writer(TEXT_FILE_PATH, datas, CSV_HEADER)
+    file_util.csv_writer(CSV_FILE_PATH, datas, CSV_HEADER)
+    
     
 # 상세 크롤링
 def detail(detail_url):
@@ -56,8 +58,8 @@ def detail(detail_url):
     else:
         reg_date = dates[0].text  # 입력일
 
-    data = {"title":title, "writer":writer, "content":content, "reg_date":reg_date}
-    return data 
+
+    return [ title, real_writer, reg_date, content ]
 
         
 def main(): 
